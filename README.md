@@ -29,4 +29,5 @@ A description of danger-android_lint.
 - [ ] fill out readme.md
 - [ ] create a changelog
 - [ ] open souce it
+- [ ] publish gem
 - [ ] send MR to danger.systems
