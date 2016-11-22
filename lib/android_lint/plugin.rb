@@ -4,9 +4,14 @@ module Danger
 
   class DangerAndroidLint < Plugin
 
-    def lint_files
-      system "./gradlew lintStagingDebug"
-      file = File.open("android-lint-report.xml")
+    attr_accessor :gradle_task
+
+    def lint
+      fail("Could not find `gradlew` inside current directory") unless gradlew_exists?
+
+      system "./gradlew #{gradle_task || 'lint'}"
+
+      file = File.open("app/build/reports/lint/lint-result.xml")
       report = Oga.parse_xml(file)
       issues = report.xpath('//issue')
 
@@ -25,7 +30,7 @@ module Danger
     end
 
     def parse_results(results, heading)
-      message = "#### #{heading}\n\n"
+      message = "#### #{heading} (#{results.count})\n\n"
 
       message << "| File | Line | Reason |\n"
       message << "| ---- | ---- | ------ |\n"
@@ -36,10 +41,14 @@ module Danger
         line = location.get('line') || 'N/A'
         reason = r.get('message')
 
-        message << "#{filename} | #{line} | #{reason} \n"
+        message << "`#{filename}` | #{line} | #{reason} \n"
       end
 
       message
+    end
+
+    def gradlew_exists?
+      `ls gradlew`.strip.empty? == false
     end
   end
 end
