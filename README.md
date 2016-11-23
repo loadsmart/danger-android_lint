@@ -1,3 +1,5 @@
+⚠️ Note: This plugin is still under heavy development 👷
+
 [![CircleCI](https://circleci.com/gh/loadsmart/danger-android_lint.svg?style=svg)](https://circleci.com/gh/loadsmart/danger-android_lint)
 
 # danger-android_lint
@@ -9,9 +11,6 @@ A description of danger-android_lint.
     $ gem install danger-android_lint
 
 ## Usage
-
-    Methods and attributes from this plugin are available in
-    your `Dangerfile` under the `android_lint` namespace.
 
 ## Development
 
