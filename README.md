@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/loadsmart/danger-android_lint.svg?style=svg)](https://circleci.com/gh/loadsmart/danger-android_lint)
+
 # danger-android_lint
 
 A description of danger-android_lint.
