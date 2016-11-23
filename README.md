@@ -22,9 +22,8 @@ A description of danger-android_lint.
 5. Make your changes.
 
 ## TODO
-- [ ] add `gradle_task` as a `attr_accessor` (defaults to `lint`)
+- [x] add `gradle_task` as a `attr_accessor` (defaults to `lint`)
 - [ ] add `severity` as a `attr_accessor` (defaults to `Warning`)
-- [ ] add `xml_report_file` as a `attr_accessor`
 - [ ] write specs
 - [ ] add code comments
 - [ ] add link to bot's comment pointing to html report artifact
@@ -32,4 +31,6 @@ A description of danger-android_lint.
 - [ ] create a changelog
 - [ ] open souce it
 - [ ] publish gem
+- [ ] create its own Dangerfile
+- [ ] configure ci build
 - [ ] send MR to danger.systems
