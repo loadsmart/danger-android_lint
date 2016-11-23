@@ -28,9 +28,9 @@ A description of danger-android_lint.
 - [ ] add code comments
 - [ ] add link to bot's comment pointing to html report artifact
 - [ ] fill out readme.md
-- [ ] create a changelog
+- [x] create a changelog
 - [ ] open souce it
 - [ ] publish gem
 - [ ] create its own Dangerfile
-- [ ] configure ci build
+- [x] configure ci build
 - [ ] send MR to danger.systems
