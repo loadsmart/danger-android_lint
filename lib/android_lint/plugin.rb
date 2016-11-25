@@ -5,10 +5,11 @@ module Danger
   class DangerAndroidLint < Plugin
 
     SEVERITY_LEVELS = ["Warning", "Error", "Fatal"]
+    REPORT_FILE = "app/build/reports/lint/lint-result.xml"
 
     attr_accessor :gradle_task
 
-    attr_accessor :severity
+    attr_writer :severity
 
     def lint
       unless gradlew_exists?
@@ -21,8 +22,8 @@ module Danger
         return
       end
 
-      unless File.exists?("app/build/reports/lint/lint-result.xml")
-        fail("Lint report not found at `app/build/reports/lint/lint-result.xml`. "\
+      unless File.exists?(REPORT_FILE)
+        fail("Lint report not found at `#{REPORT_FILE}`. "\
           "Have you forgot to add `xmlReport true` to your `build.gradle` file?")
       end
 
@@ -31,6 +32,10 @@ module Danger
       issues = read_issues_from_report
       message = message_for_issues(issues)
       markdown(message) unless issues.empty?
+    end
+
+    def severity
+      @severity || SEVERITY_LEVELS.first
     end
 
     private

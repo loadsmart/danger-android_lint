@@ -23,7 +23,7 @@ A description of danger-android_lint.
 ## TODO
 - [x] add `gradle_task` as a `attr_accessor` (defaults to `lint`)
 - [x] add `severity` as a `attr_accessor` (defaults to `Warning`)
-- [ ] write specs
+- [x] write specs
 - [ ] add code comments
 - [ ] add link to bot's comment pointing to html report artifact
 - [ ] fill out readme.md
