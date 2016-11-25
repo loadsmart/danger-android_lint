@@ -1,3 +1,5 @@
+⚠️ Note: This plugin is still under heavy development 👷
+
 [![CircleCI](https://circleci.com/gh/loadsmart/danger-android_lint.svg?style=svg)](https://circleci.com/gh/loadsmart/danger-android_lint)
 
 # danger-android_lint
@@ -10,9 +12,6 @@ A description of danger-android_lint.
 
 ## Usage
 
-    Methods and attributes from this plugin are available in
-    your `Dangerfile` under the `android_lint` namespace.
-
 ## Development
 
 1. Clone this repo
@@ -23,7 +22,7 @@ A description of danger-android_lint.
 
 ## TODO
 - [x] add `gradle_task` as a `attr_accessor` (defaults to `lint`)
-- [ ] add `severity` as a `attr_accessor` (defaults to `Warning`)
+- [x] add `severity` as a `attr_accessor` (defaults to `Warning`)
 - [ ] write specs
 - [ ] add code comments
 - [ ] add link to bot's comment pointing to html report artifact
