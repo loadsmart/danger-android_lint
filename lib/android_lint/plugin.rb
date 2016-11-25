@@ -4,29 +4,54 @@ module Danger
 
   class DangerAndroidLint < Plugin
 
+    SEVERITY_LEVELS = ["Warning", "Error", "Fatal"]
+
     attr_accessor :gradle_task
 
+    attr_accessor :severity
+
     def lint
-      fail("Could not find `gradlew` inside current directory") unless gradlew_exists?
+      unless gradlew_exists?
+        fail("Could not find `gradlew` inside current directory")
+        return
+      end
+
+      unless SEVERITY_LEVELS.include?(severity)
+        fail("'#{severity}' is not a valid value for `severity` parameter.")
+        return
+      end
+
+      unless File.exists?("app/build/reports/lint/lint-result.xml")
+        fail("Lint report not found at `app/build/reports/lint/lint-result.xml`. "\
+          "Have you forgot to add `xmlReport true` to your `build.gradle` file?")
+      end
 
       system "./gradlew #{gradle_task || 'lint'}"
 
+      issues = read_issues_from_report
+      message = message_for_issues(issues)
+      markdown(message) unless issues.empty?
+    end
+
+    private
+
+    def read_issues_from_report()
       file = File.open("app/build/reports/lint/lint-result.xml")
       report = Oga.parse_xml(file)
-      issues = report.xpath('//issue')
+      report.xpath('//issue')
+    end
 
-      warnings = issues.select{|issue| issue.get("severity") == "Warning"}
-      errors = issues.select{|issue| issue.get("severity") == "Error"}
+    def message_for_issues(issues)
+      message = "### AndroidLint found issues\n\n"
 
-      message = ''
-      if warnings.count > 0 || errors.count > 0
-        message = "### AndroidLint found issues\n\n"
+      severity_index = SEVERITY_LEVELS.index(severity) || 0
+      levels = SEVERITY_LEVELS.slice(severity_index, SEVERITY_LEVELS.size)
+      levels.reverse.each do |level|
+        filtered = issues.select{|issue| issue.get("severity") == level}
+        message << parse_results(filtered, level) unless filtered.empty?
       end
 
-      message << parse_results(warnings, 'Warnings') unless warnings.empty?
-      message << parse_results(errors, 'Errors') unless errors.empty?
-
-      markdown message unless message.empty?
+      message
     end
 
     def parse_results(results, heading)
