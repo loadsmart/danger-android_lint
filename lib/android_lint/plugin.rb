@@ -1,16 +1,51 @@
-require 'oga'
-
 module Danger
 
+  # Lint files of a gradle based Android project.
+  # This is done using the Android's [Lint](https://developer.android.com/studio/write/lint.html) tool.
+  # Results are passed out as tables in markdown.
+  #
+  # @example Running AndroidLint with its basic configuration
+  #
+  #          android_lint.lint
+  #
+  # @example Running AndroidLint with a specific gradle task
+  #
+  #          android_lint.gradle_task = "lintMyFlavorDebug"
+  #          android_lint.lint
+  #
+  # @example Running AndroidLint for a specific severity level and up
+  #
+  #          # options are ["Warning", "Error", "Fatal"]
+  #          android_lint.severity = "Error"
+  #          android_lint.lint
+  #
+  # @see loadsmart/danger-android_lint
+  # @tags android, lint
+  #
   class DangerAndroidLint < Plugin
 
     SEVERITY_LEVELS = ["Warning", "Error", "Fatal"]
     REPORT_FILE = "app/build/reports/lint/lint-result.xml"
 
+    # Custom gradle task to run.
+    # This is useful when your project has different flavors.
+    # Defaults to "lint".
+    # @return [String]
     attr_accessor :gradle_task
 
+    # Defines the severity level of the execution.
+    # Selected levels are the chosen one and up.
+    # Possible values are "Warning", "Error" or "Fatal".
+    # Defaults to "Warning".
+    # @return [String]
     attr_writer :severity
 
+    # Calls lint task of your gradle project.
+    # It fails if `gradlew` cannot be found inside current directory.
+    # It fails if `severity` level is not a valid option.
+    # It fails if `xmlReport` configuration is not set to `true` in your `build.gradle` file.
+    # @return [void]
+    #
     def lint
       unless gradlew_exists?
         fail("Could not find `gradlew` inside current directory")
@@ -34,6 +69,8 @@ module Danger
       markdown(message) unless issues.empty?
     end
 
+    # A getter for `severity`, returning "Warning" if value is nil.
+    # @return [String]
     def severity
       @severity || SEVERITY_LEVELS.first
     end
@@ -42,7 +79,10 @@ module Danger
 
     def read_issues_from_report()
       file = File.open("app/build/reports/lint/lint-result.xml")
+
+      require 'oga'
       report = Oga.parse_xml(file)
+
       report.xpath('//issue')
     end
 
