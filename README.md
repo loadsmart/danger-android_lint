@@ -1,5 +1,3 @@
-⚠️ Note: This plugin is still under heavy development 👷
-
 [![CircleCI](https://circleci.com/gh/loadsmart/danger-android_lint.svg?style=svg)](https://circleci.com/gh/loadsmart/danger-android_lint)
 
 # danger-android_lint
@@ -80,6 +78,6 @@ MIT
 - [x] create a changelog
 - [x] configure ci build
 - [x] fill out readme.md
-- [ ] open source it
+- [x] open source it
 - [ ] publish gem
 - [ ] send MR to danger.systems
