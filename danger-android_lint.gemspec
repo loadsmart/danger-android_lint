@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = AndroidLint::VERSION
   spec.authors       = ['Gustavo Barbosa']
   spec.email         = ['gustavo@loadsmart.com']
-  spec.description   = %q{A short description of danger-android_lint.}
-  spec.summary       = %q{A longer description of danger-android_lint.}
+  spec.description   = %q{A Danger plugin for Android Lint}
+  spec.summary       = %q{Lint files of a gradle based Android project. This is done using the Android's Lint tool. Results are passed out as tables in markdown.}
   spec.homepage      = 'https://github.com/loadsmart/danger-android_lint'
   spec.license       = 'MIT'
 
