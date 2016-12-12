@@ -69,15 +69,3 @@ android_lint.lint
 ## License
 
 MIT
-
-## TODO
-- [x] add `gradle_task` as a `attr_accessor` (defaults to `lint`)
-- [x] add `severity` as a `attr_accessor` (defaults to `Warning`)
-- [x] write specs
-- [x] add code comments
-- [x] create a changelog
-- [x] configure ci build
-- [x] fill out readme.md
-- [x] open source it
-- [ ] publish gem
-- [ ] send MR to danger.systems
