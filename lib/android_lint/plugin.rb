@@ -65,8 +65,10 @@ module Danger
       system "./gradlew #{gradle_task || 'lint'}"
 
       issues = read_issues_from_report
-      message = message_for_issues(issues)
-      markdown(message) unless issues.empty?
+      filtered_issues = filter_issues_by_severity(issues)
+
+      message = message_for_issues(filtered_issues)
+      markdown(message) unless filtered_issues.empty?
     end
 
     # A getter for `severity`, returning "Warning" if value is nil.
@@ -77,7 +79,7 @@ module Danger
 
     private
 
-    def read_issues_from_report()
+    def read_issues_from_report
       file = File.open("app/build/reports/lint/lint-result.xml")
 
       require 'oga'
@@ -86,12 +88,20 @@ module Danger
       report.xpath('//issue')
     end
 
+    def filter_issues_by_severity(issues)
+      issues.select do |issue|
+        severity_index(issue.get("severity")) >= severity_index(severity)
+      end
+    end
+
+    def severity_index(severity)
+      SEVERITY_LEVELS.index(severity) || 0
+    end
+
     def message_for_issues(issues)
       message = "### AndroidLint found issues\n\n"
 
-      severity_index = SEVERITY_LEVELS.index(severity) || 0
-      levels = SEVERITY_LEVELS.slice(severity_index, SEVERITY_LEVELS.size)
-      levels.reverse.each do |level|
+      SEVERITY_LEVELS.reverse.each do |level|
         filtered = issues.select{|issue| issue.get("severity") == level}
         message << parse_results(filtered, level) unless filtered.empty?
       end

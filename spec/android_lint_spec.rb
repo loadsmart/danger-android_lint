@@ -32,7 +32,7 @@ module Danger
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
         allow(File).to receive(:exists?).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(true)
 
-        fake_result = File.open("spec/fixtures/lint-result.xml")
+        fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
         allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
 
         @android_lint.lint
@@ -43,7 +43,7 @@ module Danger
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
         allow(File).to receive(:exists?).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(false)
 
-        fake_result = File.open("spec/fixtures/lint-result.xml")
+        fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
         allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
 
         @android_lint.lint
@@ -56,12 +56,12 @@ module Danger
         before do
           allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
           allow(File).to receive(:exists?).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(false)
-
-          fake_result = File.open("spec/fixtures/lint-result.xml")
-          allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
         end
 
         it 'Prints markdown if issues were found' do
+          fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+          allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+
           @android_lint.lint
 
           markdown = @android_lint.status_report[:markdowns].first.message
@@ -75,6 +75,27 @@ module Danger
 
           expect(markdown).to include("Warning (1)")
           expect(markdown).to include("`Events.java` | 24 | Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+        end
+
+        it 'Doesn`t print anything if no errors were found' do
+          fake_result = File.open("spec/fixtures/lint-result-empty.xml")
+          allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+
+          @android_lint.lint
+
+          markdown = @android_lint.status_report[:markdowns].first
+          expect(markdown).to be_nil
+        end
+
+        it 'Doesn`t print anything if no errors were found' do
+          fake_result = File.open("spec/fixtures/lint-result-without-fatal.xml")
+          allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+
+          @android_lint.severity = "Fatal"
+          @android_lint.lint
+
+          markdown = @android_lint.status_report[:markdowns].first
+          expect(markdown).to be_nil
         end
 
       end

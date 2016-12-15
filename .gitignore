@@ -2,3 +2,4 @@
 pkg
 .idea/
 .yardoc/
+*.gem
