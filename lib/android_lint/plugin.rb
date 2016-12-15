@@ -57,12 +57,12 @@ module Danger
         return
       end
 
+      system "./gradlew #{gradle_task || 'lint'}"
+
       unless File.exists?(REPORT_FILE)
         fail("Lint report not found at `#{REPORT_FILE}`. "\
           "Have you forgot to add `xmlReport true` to your `build.gradle` file?")
       end
-
-      system "./gradlew #{gradle_task || 'lint'}"
 
       issues = read_issues_from_report
       filtered_issues = filter_issues_by_severity(issues)
