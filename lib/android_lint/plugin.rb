@@ -25,7 +25,18 @@ module Danger
   class DangerAndroidLint < Plugin
 
     SEVERITY_LEVELS = ["Warning", "Error", "Fatal"]
-    REPORT_FILE = "app/build/reports/lint/lint-result.xml"
+
+    # Location of lint report file
+    # If your Android lint task outputs to a different location, you can specify it here.
+    # Defaults to "app/build/reports/lint/lint-result.xml".
+    # @return [String]
+    attr_accessor :report_file
+    # A getter for `severity`, returning "Warning" if value is nil.
+    # @return [String]
+    def report_file
+      @report_file || 'app/build/reports/lint/lint-result.xml'
+    end
+    REPORT_FILE = @report_file
 
     # Custom gradle task to run.
     # This is useful when your project has different flavors.
