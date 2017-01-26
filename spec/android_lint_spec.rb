@@ -21,6 +21,7 @@ module Danger
 
       it "Fails if severity is an unknown value" do
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
+        allow(File).to receive(:exists?).with(@android_lint.report_file()).and_return(true)
 
         @android_lint.severity = "Dummy"
         @android_lint.lint
@@ -30,10 +31,10 @@ module Danger
 
       it "Sets severity to 'Warning' if no severity param is provided" do
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
-        allow(File).to receive(:exists?).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(true)
+        allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(true)
 
         fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
-        allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+        allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
         @android_lint.lint
         expect(@android_lint.severity).to eq("Warning")
@@ -41,10 +42,10 @@ module Danger
 
       it "Fails if report file does not exist" do
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
-        allow(File).to receive(:exists?).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(false)
+        allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(false)
 
         fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
-        allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+        allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
         @android_lint.lint
 
@@ -55,12 +56,12 @@ module Danger
       describe 'lint' do
         before do
           allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
-          allow(File).to receive(:exists?).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(false)
+          allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(false)
         end
 
         it 'Prints markdown if issues were found' do
           fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
-          allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+          allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
           @android_lint.lint
 
@@ -79,7 +80,7 @@ module Danger
 
         it 'Doesn`t print anything if no errors were found' do
           fake_result = File.open("spec/fixtures/lint-result-empty.xml")
-          allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+          allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
           @android_lint.lint
 
@@ -89,7 +90,7 @@ module Danger
 
         it 'Doesn`t print anything if no errors were found' do
           fake_result = File.open("spec/fixtures/lint-result-without-fatal.xml")
-          allow(File).to receive(:open).with(Danger::DangerAndroidLint::REPORT_FILE).and_return(fake_result)
+          allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
           @android_lint.severity = "Fatal"
           @android_lint.lint
