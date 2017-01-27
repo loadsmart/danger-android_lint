@@ -40,6 +40,30 @@ module Danger
         expect(@android_lint.severity).to eq("Warning")
       end
 
+      it "Sets the report file to a default location if no param is provided" do
+        allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
+        allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(true)
+        
+        fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+        allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+
+        @android_lint.lint
+        expect(@android_lint.report_file).to eq("app/build/reports/lint/lint-result.xml")
+      end
+
+      it "Sets the report_file to the user's preference in the Dangerfile'" do
+        allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
+        allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(false)
+        
+        fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+        allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+
+        @android_lint.report_file = 'some/other/location/lint-result.xml'
+        @android_lint.lint
+
+        expect(@android_lint.report_file).to eq('some/other/location/lint-result.xml')
+      end
+
       it "Fails if report file does not exist" do
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
         allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(false)
