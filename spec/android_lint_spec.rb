@@ -53,12 +53,13 @@ module Danger
 
       it "Sets the report_file to the user's preference in the Dangerfile'" do
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
-        allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(false)
-        
-        fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
-        allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
         @android_lint.report_file = 'some/other/location/lint-result.xml'
+
+        fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+        allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+        allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(true)
+        
         @android_lint.lint
 
         expect(@android_lint.report_file).to eq('some/other/location/lint-result.xml')
