@@ -25,7 +25,17 @@ module Danger
   class DangerAndroidLint < Plugin
 
     SEVERITY_LEVELS = ["Warning", "Error", "Fatal"]
-    REPORT_FILE = "app/build/reports/lint/lint-result.xml"
+
+    # Location of lint report file
+    # If your Android lint task outputs to a different location, you can specify it here.
+    # Defaults to "app/build/reports/lint/lint-result.xml".
+    # @return [String]
+    attr_accessor :report_file
+    # A getter for `report_file`.
+    # @return [String]
+    def report_file
+      return @report_file || 'app/build/reports/lint/lint-result.xml'
+    end
 
     # Custom gradle task to run.
     # This is useful when your project has different flavors.
@@ -59,8 +69,8 @@ module Danger
 
       system "./gradlew #{gradle_task || 'lint'}"
 
-      unless File.exists?(REPORT_FILE)
-        fail("Lint report not found at `#{REPORT_FILE}`. "\
+      unless File.exists?(report_file)
+        fail("Lint report not found at `#{report_file}`. "\
           "Have you forgot to add `xmlReport true` to your `build.gradle` file?")
       end
 
@@ -80,7 +90,7 @@ module Danger
     private
 
     def read_issues_from_report
-      file = File.open("app/build/reports/lint/lint-result.xml")
+      file = File.open(report_file)
 
       require 'oga'
       report = Oga.parse_xml(file)
