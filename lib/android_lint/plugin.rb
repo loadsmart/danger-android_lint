@@ -56,7 +56,7 @@ module Danger
     # It fails if `xmlReport` configuration is not set to `true` in your `build.gradle` file.
     # @return [void]
     #
-    def lint
+    def lint(inline_mode: false)
       unless gradlew_exists?
         fail("Could not find `gradlew` inside current directory")
         return
@@ -77,8 +77,13 @@ module Danger
       issues = read_issues_from_report
       filtered_issues = filter_issues_by_severity(issues)
 
-      message = message_for_issues(filtered_issues)
-      markdown(message) unless filtered_issues.empty?
+      if inline_mode
+        # Report with inline comment
+        send_inline_comment(filtered_issues)
+      else
+        message = message_for_issues(filtered_issues)
+        markdown(message) unless filtered_issues.empty?
+      end
     end
 
     # A getter for `severity`, returning "Warning" if value is nil.
@@ -120,6 +125,8 @@ module Danger
     end
 
     def parse_results(results, heading)
+      target_files = (git.modified_files - git.deleted_files) + git.added_files
+      dir = "#{Dir.pwd}/"
       message = "#### #{heading} (#{results.count})\n\n"
 
       message << "| File | Line | Reason |\n"
@@ -127,7 +134,8 @@ module Danger
 
       results.each do |r|
         location = r.xpath('location').first
-        filename = location.get('file').split('/').last
+        filename = location.get('file').gsub(dir, "")
+        next unless target_files.include? filename
         line = location.get('line') || 'N/A'
         reason = r.get('message')
 
@@ -135,6 +143,26 @@ module Danger
       end
 
       message
+    end
+
+
+    # Send inline comment with danger's warn or fail method
+    #
+    # @return [void]
+    def send_inline_comment (issues)
+      target_files = (git.modified_files - git.deleted_files) + git.added_files
+      dir = "#{Dir.pwd}/"
+      SEVERITY_LEVELS.reverse.each do |level|
+        filtered = issues.select{|issue| issue.get("severity") == level}
+        next if filtered.empty?
+        filtered.each do |r|
+          location = r.xpath('location').first
+          filename = location.get('file').gsub(dir, "")
+          next unless target_files.include? filename
+          line = (location.get('line') || "0").to_i
+          send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
+        end
+      end
     end
 
     def gradlew_exists?
