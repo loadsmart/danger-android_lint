@@ -143,6 +143,24 @@ module Danger
           expect(warn).to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
         end
 
+        it 'Only show comment in changed files' do
+          allow(@android_lint.git).to receive(:modified_files).and_return([
+          "/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/common/views/AvatarView.java",
+          ])
+
+          fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+          allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+
+          @android_lint.filtering = true
+          @android_lint.lint inline_mode: true
+          error = @android_lint.status_report[:errors]
+          expect(error).to include("Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead")
+          expect(error).not_to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+
+          warn = @android_lint.status_report[:warnings]
+          expect(warn).not_to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+        end
+
       end
 
     end

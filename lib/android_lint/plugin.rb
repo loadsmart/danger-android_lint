@@ -50,6 +50,10 @@ module Danger
     # @return [String]
     attr_writer :severity
 
+    # Enable filtering
+    # Only show messages within changed files.
+    attr_accessor :filtering
+
     # Calls lint task of your gradle project.
     # It fails if `gradlew` cannot be found inside current directory.
     # It fails if `severity` level is not a valid option.
@@ -135,7 +139,7 @@ module Danger
       results.each do |r|
         location = r.xpath('location').first
         filename = location.get('file').gsub(dir, "")
-        next unless target_files.include? filename
+        next unless !filtering || (target_files.include? filename)
         line = location.get('line') || 'N/A'
         reason = r.get('message')
 
@@ -158,7 +162,7 @@ module Danger
         filtered.each do |r|
           location = r.xpath('location').first
           filename = location.get('file').gsub(dir, "")
-          next unless target_files.include? filename
+          next unless !filtering || (target_files.include? filename)
           line = (location.get('line') || "0").to_i
           send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
         end
