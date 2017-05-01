@@ -58,6 +58,21 @@ android_lint.severity = "Error"
 android_lint.lint
 ```
 
+#### Lint only added/modified files
+
+If you're dealing with a legacy project, with tons of warnings, you may want to lint only new/modified files. You can easily achieve that, setting the `filtering` parameter to `true`.
+
+```rb
+android_lint.filtering = true
+android_lint.lint
+```
+
+#### Make Danger comment directly on the line instead of printing a Markdown table (GitHub only)
+
+```rb
+android_lint.lint(inline_mode: true)
+```
+
 ## Development
 
 1. Clone this repo
@@ -68,4 +83,4 @@ android_lint.lint
 
 ## License
 
-MIT
+[MIT](https://raw.githubusercontent.com/loadsmart/danger-android_lint/master/LICENSE.txt)
