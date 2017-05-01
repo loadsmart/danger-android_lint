@@ -10,6 +10,12 @@ module Danger
       before do
         @dangerfile = testing_dangerfile
         @android_lint = @dangerfile.android_lint
+        allow(@android_lint.git).to receive(:deleted_files).and_return([])
+        allow(@android_lint.git).to receive(:added_files).and_return([])
+        allow(@android_lint.git).to receive(:modified_files).and_return([
+          "/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/common/views/AvatarView.java",
+          "/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/analytics/Events.java"
+        ])
       end
 
       it "Fails if gradlew does not exist" do
@@ -94,13 +100,13 @@ module Danger
           expect(markdown).to include("AndroidLint found issues")
 
           expect(markdown).to include("Fatal (1)")
-          expect(markdown).to include("`AvatarView.java` | 60 | Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead")
+          expect(markdown).to include("`/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/common/views/AvatarView.java` | 60 | Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead")
 
           expect(markdown).to include("Error (1)")
-          expect(markdown).to include("`Events.java` | 21 | Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+          expect(markdown).to include("`/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/analytics/Events.java` | 21 | Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
 
           expect(markdown).to include("Warning (1)")
-          expect(markdown).to include("`Events.java` | 24 | Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+          expect(markdown).to include("`/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/analytics/Events.java` | 24 | Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
         end
 
         it 'Doesn`t print anything if no errors were found' do
@@ -122,6 +128,37 @@ module Danger
 
           markdown = @android_lint.status_report[:markdowns].first
           expect(markdown).to be_nil
+        end
+
+        it 'Send inline comment instead of markdown' do
+          fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+          allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+
+          @android_lint.lint inline_mode: true
+          error = @android_lint.status_report[:errors]
+          expect(error).to include("Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead")
+          expect(error).to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+
+          warn = @android_lint.status_report[:warnings]
+          expect(warn).to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+        end
+
+        it 'Only show comment in changed files' do
+          allow(@android_lint.git).to receive(:modified_files).and_return([
+          "/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/common/views/AvatarView.java",
+          ])
+
+          fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+          allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+
+          @android_lint.filtering = true
+          @android_lint.lint inline_mode: true
+          error = @android_lint.status_report[:errors]
+          expect(error).to include("Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead")
+          expect(error).not_to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+
+          warn = @android_lint.status_report[:warnings]
+          expect(warn).not_to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
         end
 
       end
