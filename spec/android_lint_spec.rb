@@ -49,7 +49,7 @@ module Danger
       it "Sets the report file to a default location if no param is provided" do
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
         allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(true)
-        
+
         fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
         allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
@@ -65,7 +65,7 @@ module Danger
         fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
         allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
         allow(File).to receive(:exists?).with(@android_lint.report_file).and_return(true)
-        
+
         @android_lint.lint
 
         expect(@android_lint.report_file).to eq('some/other/location/lint-result.xml')
@@ -91,6 +91,19 @@ module Danger
         end
 
         it 'Prints markdown if issues were found' do
+          fake_result = File.open("spec/fixtures/lint-result-with-special-chars.xml")
+          allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+
+          @android_lint.lint
+
+          markdown = @android_lint.status_report[:markdowns].first.message
+          expect(markdown).to include("AndroidLint found issues")
+
+          expect(markdown).to include("Warning (1)")
+          expect(markdown).to include("`app/src/main/res/values/strings.xml` | 105 | The resource `R.string.authentication_invalid_auth_token_type` appears to be unused")
+        end
+
+        it 'Prints markdown if issues were found even if there is a special char' do
           fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
           allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
@@ -101,12 +114,6 @@ module Danger
 
           expect(markdown).to include("Fatal (1)")
           expect(markdown).to include("`/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/common/views/AvatarView.java` | 60 | Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead")
-
-          expect(markdown).to include("Error (1)")
-          expect(markdown).to include("`/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/analytics/Events.java` | 21 | Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
-
-          expect(markdown).to include("Warning (1)")
-          expect(markdown).to include("`/Users/gustavo/Developer/app-android/app/src/main/java/com/loadsmart/analytics/Events.java` | 24 | Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
         end
 
         it 'Doesn`t print anything if no errors were found' do

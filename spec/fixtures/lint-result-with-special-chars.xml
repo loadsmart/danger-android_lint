@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="4" by="lint 25.2.2">
+  <issue
+      id="UnusedResources"
+      severity="Warning"
+      message="The resource `R.string.authentication_invalid_auth_token_type` appears to be unused"
+      category="Performance"
+      priority="3"
+      summary="Unused resources"
+      explanation="Unused resources make applications larger and slow down builds."
+      errorLine1="    &lt;string name=&quot;authentication_invalid_auth_token_type&quot;>Autenticação inválida.&lt;/string>"
+      errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      quickfix="studio">
+      <location
+          file="app/src/main/res/values/strings.xml"
+          line="105"
+          column="13"/>
+  </issue>
+</issues>
