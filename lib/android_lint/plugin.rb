@@ -54,6 +54,9 @@ module Danger
     # Only show messages within changed files.
     attr_accessor :filtering
 
+    # Skip gradle task
+    attr_accessor :skip_gradle_task
+
     # Calls lint task of your gradle project.
     # It fails if `gradlew` cannot be found inside current directory.
     # It fails if `severity` level is not a valid option.
@@ -61,7 +64,7 @@ module Danger
     # @return [void]
     #
     def lint(inline_mode: false)
-      unless gradlew_exists?
+      if !skip_gradle_task && !gradlew_exists?
         fail("Could not find `gradlew` inside current directory")
         return
       end
@@ -71,7 +74,7 @@ module Danger
         return
       end
 
-      system "./gradlew #{gradle_task || 'lint'}"
+      system "./gradlew #{gradle_task || 'lint'}" unless skip_gradle_task
 
       unless File.exists?(report_file)
         fail("Lint report not found at `#{report_file}`. "\

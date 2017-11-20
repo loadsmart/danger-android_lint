@@ -49,6 +49,13 @@ android_lint.gradle_task = "lintMyFlavorDebug"
 android_lint.lint
 ```
 
+If you want to skip gradle task, setting the `skip_gradle_task` parameter to `true`.
+
+```rb
+android_lint.skip_gradle_task = true
+android_lint.lint
+```
+
 #### Changing report's severity level
 
 If you want to filter lint issues based on their severity level, you can do that by setting a value to `severity`. Bear in mind that you are filtering issues by the severity level you've set **and up**. Possible values are `Warning`, `Error` and `Fatal`. Default is `Warning` (which is everything).
