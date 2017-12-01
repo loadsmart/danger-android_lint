@@ -1,3 +1,7 @@
+# 0.0.5
+- Fix count number for issues ([@jettbow](https://github.com/jettbow))
+- Add option for skipping gradle task ([@litmon](https://github.com/litmon))
+
 # 0.0.4
 - Add `filtering` parameter, default to false, to run lint only on modified files ([@leonhartX](https://github.com/leonhartX))
 - Add support for GitHub's inline comments ([@leonhartX](https://github.com/leonhartX))
