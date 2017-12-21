@@ -1,3 +1,6 @@
+# 0.0.6
+- Bump yarn and rubocop versions due to security issues ([@barbosa](https://github.com/barbosa))
+
 # 0.0.5
 - Fix count number for issues ([@jettbow](https://github.com/jettbow))
 - Add option for skipping gradle task ([@litmon](https://github.com/litmon))
