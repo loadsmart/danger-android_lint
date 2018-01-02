@@ -56,6 +56,15 @@ android_lint.skip_gradle_task = true
 android_lint.lint
 ```
 
+#### Changing report's file path
+
+If you're using a path to output your report file other than the default one, you can specify it by setting a new value to `report_file`:
+
+```rb
+android_lint.report_file = "your/report/file.xml"
+android_lint.lint
+```
+
 #### Changing report's severity level
 
 If you want to filter lint issues based on their severity level, you can do that by setting a value to `severity`. Bear in mind that you are filtering issues by the severity level you've set **and up**. Possible values are `Warning`, `Error` and `Fatal`. Default is `Warning` (which is everything).
