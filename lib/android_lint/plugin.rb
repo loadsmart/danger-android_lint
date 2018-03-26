@@ -43,6 +43,14 @@ module Danger
     # @return [String]
     attr_accessor :gradle_task
 
+    # Custom gradle project directory.
+    # Defaults is repository's root directory.
+    # @return [String]
+    attr_accessor :gradle_project
+    def gradle_project
+      return @gradle_project || ''
+    end
+
     # Defines the severity level of the execution.
     # Selected levels are the chosen one and up.
     # Possible values are "Warning", "Error" or "Fatal".
@@ -74,9 +82,16 @@ module Danger
         return
       end
 
+      if gradle_project != ''
+          "export DANGER_TMP=$PWD"
+          "cd #{gradle_project}"
+      end
       system "./gradlew #{gradle_task || 'lint'}" unless skip_gradle_task
+      if gradle_project != ''
+          "cd DANGER_TMP"
+      end
 
-      unless File.exists?(report_file)
+      unless File.exists?("#{gradle_project}#{report_file}")
         fail("Lint report not found at `#{report_file}`. "\
           "Have you forgot to add `xmlReport true` to your `build.gradle` file?")
       end
@@ -102,7 +117,7 @@ module Danger
     private
 
     def read_issues_from_report
-      file = File.open(report_file)
+      file = File.open("#{gradle_project}#{report_file}")
 
       require 'oga'
       report = Oga.parse_xml(file)
@@ -171,13 +186,14 @@ module Danger
           filename = location.get('file').gsub(dir, "")
           next unless !filtering || (target_files.include? filename)
           line = (location.get('line') || "0").to_i
+          print("#{filename}\n")
           send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
         end
       end
     end
 
     def gradlew_exists?
-      `ls gradlew`.strip.empty? == false
+        `ls #{gradle_project}gradlew`.strip.empty? == false
     end
   end
 end
