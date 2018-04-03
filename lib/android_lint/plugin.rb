@@ -140,7 +140,7 @@ module Danger
       results.each do |r|
         location = r.xpath('location').first
         filename = location.get('file').gsub(dir, "")
-        next unless !filtering || (target_files.any? {|modified_file| filename.include? (modified_file)})
+        next unless !filtering || (target_files.any? {|modified_file| filename.end_with? (modified_file)})
         line = location.get('line') || 'N/A'
         reason = r.get('message')
         count = count + 1
@@ -169,7 +169,7 @@ module Danger
         filtered.each do |r|
           location = r.xpath('location').first
           filename = location.get('file').gsub(dir, "")
-          next unless !filtering || (target_files.any? {|modified_file| filename.include? (modified_file)})
+          next unless !filtering || (target_files.any? {|modified_file| filename.end_with? (modified_file)})
           line = (location.get('line') || "0").to_i
           send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
         end
