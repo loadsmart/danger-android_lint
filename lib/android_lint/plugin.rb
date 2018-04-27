@@ -43,12 +43,21 @@ module Danger
     # @return [String]
     attr_accessor :gradle_task
 
+    # Custom gradle module to run.
+    # This is useful when your project has different flavors.
+    # Defaults to [nil].
+    # @return [Array]
+    attr_writer :gradle_modules
+    def gradle_modules
+      return @gradle_modules ||= Array.new
+    end
+
     # Custom gradle project directory.
     # Defaults is repository's root directory.
     # @return [String]
     attr_accessor :gradle_project
     def gradle_project
-      return @gradle_project || ''
+      return @gradle_project ||= ''
     end
 
     # Defines the severity level of the execution.
@@ -76,7 +85,24 @@ module Danger
         fail("Could not find `gradlew` inside current directory")
         return
       end
+      if gradle_modules.empty?
+          lint_execute(inline_mode)
+      else
+          gradle_modules.each_with_index{ |gradle_module, index|
+              task = gradle_task
+              file = report_file
+              @gradle_task = gradle_module + ":" + task
+              @report_file = gradle_module + "/" + file
 
+              lint_execute(inline_mode)
+
+              @gradle_task = task
+              @report_file = file
+          }
+      end
+    end
+
+    def lint_execute(inline_mode)
       unless SEVERITY_LEVELS.include?(severity)
         fail("'#{severity}' is not a valid value for `severity` parameter.")
         return
@@ -186,7 +212,6 @@ module Danger
           filename = location.get('file').gsub(dir, "")
           next unless !filtering || (target_files.include? filename)
           line = (location.get('line') || "0").to_i
-          print("#{filename}\n")
           send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
         end
       end
