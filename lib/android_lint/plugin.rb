@@ -43,8 +43,7 @@ module Danger
     # @return [String]
     attr_accessor :gradle_task
 
-    # Custom gradle module to run.
-    # This is useful when your project has different flavors.
+    # Custom multiple gradle module to run.
     # Defaults to [nil].
     # @return [Array]
     attr_writer :gradle_modules

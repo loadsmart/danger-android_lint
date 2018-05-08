@@ -49,6 +49,18 @@ android_lint.gradle_task = "lintMyFlavorDebug"
 android_lint.lint
 ```
 
+In case you have multiple modules, you may want to change the gradle modules. You can achieve that by changing the value of `gradle_modules`. Default is `nil`.
+
+```rb
+android_lint.gradle_modules = ["app", "library"]
+```
+
+In case your Android gradle project is not equals to root directory of repository. You can achieve that by changing the value of `gradle_project`. Default is repository's root directory.
+
+```rb
+android_lint.gradle_project = "YourAndroidProjectDir/"
+```
+
 If you want to skip gradle task, setting the `skip_gradle_task` parameter to `true`.
 
 ```rb
