@@ -1,3 +1,6 @@
+# 0.0.7
+- Bump ffi version due to security reasons ([@barbosa](https://github.com/barbosa))
+
 # 0.0.6
 - Bump yarn and rubocop versions due to security issues ([@barbosa](https://github.com/barbosa))
 
