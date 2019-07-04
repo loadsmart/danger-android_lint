@@ -81,6 +81,8 @@ module Danger
       issues = read_issues_from_report
       filtered_issues = filter_issues_by_severity(issues)
 
+      message = ""
+      
       if inline_mode
         # Report with inline comment
         send_inline_comment(filtered_issues)
@@ -88,6 +90,8 @@ module Danger
         message = message_for_issues(filtered_issues)
         markdown(message) unless filtered_issues.empty?
       end
+      
+      message
     end
 
     # A getter for `severity`, returning "Warning" if value is nil.
