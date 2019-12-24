@@ -36,6 +36,7 @@ module Danger
     # Defaults to "app/build/reports/lint/lint-result.xml".
     # @return [String]
     attr_accessor :report_file
+
     # A getter for `report_file`.
     # @return [String]
     def report_file
@@ -54,12 +55,24 @@ module Danger
     # @return [Bool]
     attr_writer :skip_gradle_task
 
+    # A getter for `skip_gradle_task`, returning `false` if value is nil.
+    # @return [Boolean]
+    def skip_gradle_task
+      @skip_gradle_task ||= false
+    end
+
     # Defines the severity level of the execution.
     # Selected levels are the chosen one and up.
     # Possible values are "Warning", "Error" or "Fatal".
     # Defaults to "Warning".
     # @return [String]
     attr_writer :severity
+
+    # A getter for `severity`, returning "Warning" if value is nil.
+    # @return [String]
+    def severity
+      @severity || SEVERITY_LEVELS.first
+    end
 
     # Enable filtering
     # Only show messages within changed files.
@@ -100,18 +113,6 @@ module Danger
         message = message_for_issues(filtered_issues)
         markdown(message) unless filtered_issues.empty?
       end
-    end
-
-    # A getter for `skip_gradle_task`, returning `false` if value is nil.
-    # @return [Boolean]
-    def skip_gradle_task
-      @skip_gradle_task ||= false
-    end
-
-    # A getter for `severity`, returning "Warning" if value is nil.
-    # @return [String]
-    def severity
-      @severity || SEVERITY_LEVELS.first
     end
 
     private
