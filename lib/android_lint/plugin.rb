@@ -13,6 +13,11 @@ module Danger
   #          android_lint.gradle_task = "lintMyFlavorDebug"
   #          android_lint.lint
   #
+  # @example Running AndroidLint without running a Gradle task
+  #
+  #          android_lint.skip_gradle_task = true
+  #          android_lint.lint
+  #
   # @example Running AndroidLint for a specific severity level and up
   #
   #          # options are ["Warning", "Error", "Fatal"]
@@ -43,6 +48,12 @@ module Danger
     # @return [String]
     attr_accessor :gradle_task
 
+    # Skip Gradle task
+    # If you skip Gradle task, for example project does not manage Gradle.
+    # Defaults to `false`.
+    # @return [Bool]
+    attr_writer :skip_gradle_task
+
     # Defines the severity level of the execution.
     # Selected levels are the chosen one and up.
     # Possible values are "Warning", "Error" or "Fatal".
@@ -61,9 +72,8 @@ module Danger
     # @return [void]
     #
     def lint(inline_mode: false)
-      unless gradlew_exists?
-        fail("Could not find `gradlew` inside current directory")
-        return
+      unless skip_gradle_task
+        return fail("Could not find `gradlew` inside current directory") unless gradlew_exists?
       end
 
       unless SEVERITY_LEVELS.include?(severity)
@@ -71,7 +81,9 @@ module Danger
         return
       end
 
-      system "./gradlew #{gradle_task || 'lint'}"
+      unless skip_gradle_task
+        system "./gradlew #{gradle_task || 'lint'}"
+      end
 
       unless File.exists?(report_file)
         fail("Lint report not found at `#{report_file}`. "\
@@ -88,6 +100,12 @@ module Danger
         message = message_for_issues(filtered_issues)
         markdown(message) unless filtered_issues.empty?
       end
+    end
+
+    # A getter for `skip_gradle_task`, returning `false` if value is nil.
+    # @return [Boolean]
+    def skip_gradle_task
+      @skip_gradle_task ||= false
     end
 
     # A getter for `severity`, returning "Warning" if value is nil.

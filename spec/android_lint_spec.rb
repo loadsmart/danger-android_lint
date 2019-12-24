@@ -25,6 +25,16 @@ module Danger
         expect(@android_lint.status_report[:errors]).to eq(["Could not find `gradlew` inside current directory"])
       end
 
+      it "Skip Gradle task" do
+        skip_gradle_task = true
+        @android_lint.skip_gradle_task = skip_gradle_task
+        expect(@android_lint.skip_gradle_task).to eq(skip_gradle_task)
+      end
+
+      it "Check default skip Gradle task" do
+        expect(@android_lint.skip_gradle_task).to eq(false)
+      end
+
       it "Fails if severity is an unknown value" do
         allow(@android_lint).to receive(:`).with("ls gradlew").and_return("gradlew")
         allow(File).to receive(:exists?).with(@android_lint.report_file()).and_return(true)
