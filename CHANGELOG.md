@@ -1,3 +1,11 @@
+# 0.0.8
+- Fix security issues ([@barbosa](https://github.com/barbosa))
+- Expose report message ([@adamstrange])(https://github.com/adamstrange))
+- Skip gradle task ([@mathroule])(https://github.com/mathroule))
+
+# 0.0.7
+- Fix security issues ([@barbosa](https://github.com/barbosa))
+
 # 0.0.6
 - Bump yarn and rubocop versions due to security issues ([@barbosa](https://github.com/barbosa))
 
