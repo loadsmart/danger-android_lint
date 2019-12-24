@@ -25,6 +25,16 @@ module Danger
         expect(@android_lint.status_report[:errors]).to eq(["Could not find `gradlew` inside current directory"])
       end
 
+      it "Check default Gradle task" do
+        expect(@android_lint.gradle_task).to eq("lint")
+      end
+
+      it "Set custom Gradle task" do
+        custom_task = "lintRelease"
+        @android_lint.gradle_task = custom_task
+        expect(@android_lint.gradle_task).to eq(custom_task)
+      end
+
       it "Skip Gradle task" do
         skip_gradle_task = true
         @android_lint.skip_gradle_task = skip_gradle_task

@@ -49,6 +49,12 @@ module Danger
     # @return [String]
     attr_accessor :gradle_task
 
+    # A getter for `gradle_task`, returning "lint" if value is nil.
+    # @return [String]
+    def gradle_task
+      @gradle_task ||= "lint"
+    end
+
     # Skip Gradle task.
     # This is useful when Gradle task has been already executed.
     # Defaults to `false`.
@@ -95,7 +101,7 @@ module Danger
       end
 
       unless skip_gradle_task
-        system "./gradlew #{gradle_task || 'lint'}"
+        system "./gradlew #{gradle_task}"
       end
 
       unless File.exists?(report_file)
