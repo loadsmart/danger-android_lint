@@ -13,6 +13,11 @@ module Danger
   #          android_lint.gradle_task = "lintMyFlavorDebug"
   #          android_lint.lint
   #
+  # @example Running AndroidLint without running a Gradle task
+  #
+  #          android_lint.skip_gradle_task = true
+  #          android_lint.lint
+  #
   # @example Running AndroidLint for a specific severity level and up
   #
   #          # options are ["Warning", "Error", "Fatal"]
@@ -31,6 +36,7 @@ module Danger
     # Defaults to "app/build/reports/lint/lint-result.xml".
     # @return [String]
     attr_accessor :report_file
+
     # A getter for `report_file`.
     # @return [String]
     def report_file
@@ -43,12 +49,36 @@ module Danger
     # @return [String]
     attr_accessor :gradle_task
 
+    # A getter for `gradle_task`, returning "lint" if value is nil.
+    # @return [String]
+    def gradle_task
+      @gradle_task ||= "lint"
+    end
+
+    # Skip Gradle task.
+    # This is useful when Gradle task has been already executed.
+    # Defaults to `false`.
+    # @return [Bool]
+    attr_writer :skip_gradle_task
+
+    # A getter for `skip_gradle_task`, returning `false` if value is nil.
+    # @return [Boolean]
+    def skip_gradle_task
+      @skip_gradle_task ||= false
+    end
+
     # Defines the severity level of the execution.
     # Selected levels are the chosen one and up.
     # Possible values are "Warning", "Error" or "Fatal".
     # Defaults to "Warning".
     # @return [String]
     attr_writer :severity
+
+    # A getter for `severity`, returning "Warning" if value is nil.
+    # @return [String]
+    def severity
+      @severity || SEVERITY_LEVELS.first
+    end
 
     # Enable filtering
     # Only show messages within changed files.
@@ -61,9 +91,8 @@ module Danger
     # @return [void]
     #
     def lint(inline_mode: false)
-      unless gradlew_exists?
-        fail("Could not find `gradlew` inside current directory")
-        return
+      unless skip_gradle_task
+        return fail("Could not find `gradlew` inside current directory") unless gradlew_exists?
       end
 
       unless SEVERITY_LEVELS.include?(severity)
@@ -71,7 +100,9 @@ module Danger
         return
       end
 
-      system "./gradlew #{gradle_task || 'lint'}"
+      unless skip_gradle_task
+        system "./gradlew #{gradle_task}"
+      end
 
       unless File.exists?(report_file)
         fail("Lint report not found at `#{report_file}`. "\
@@ -88,12 +119,6 @@ module Danger
         message = message_for_issues(filtered_issues)
         markdown(message) unless filtered_issues.empty?
       end
-    end
-
-    # A getter for `severity`, returning "Warning" if value is nil.
-    # @return [String]
-    def severity
-      @severity || SEVERITY_LEVELS.first
     end
 
     private
