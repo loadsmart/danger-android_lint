@@ -48,8 +48,8 @@ module Danger
     # @return [String]
     attr_accessor :gradle_task
 
-    # Skip Gradle task
-    # If you skip Gradle task, for example project does not manage Gradle.
+    # Skip Gradle task.
+    # This is useful when Gradle task has been already executed.
     # Defaults to `false`.
     # @return [Bool]
     attr_writer :skip_gradle_task
