@@ -195,11 +195,40 @@ module Danger
         filtered.each do |r|
           location = r.xpath('location').first
           filename = location.get('file').gsub(dir, "")
-          next unless !filtering || (target_files.include? filename)
+          next unless target_files.include? filename
           line = (location.get('line') || "0").to_i
+          if filtering
+            added_lines = parseDiff(git.diff_for_file(filename).patch)
+            next unless added_lines.include? line
+          end
           send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
         end
       end
+    end
+
+    # parses git diff of a file and retuns an array of added line numbers.
+    def parseDiff(diff)
+      current_line_number = nil
+      added_lines = []
+      diff_lines = diff.strip.split("\n")
+      diff_lines.each_with_index do |line, index|
+        if m = /\+(\d+)(?:,\d+)? @@/.match(line)
+          # (e.g. @@ -32,10 +32,7 @@) 
+          current_line_number = Integer(m[1])
+        else
+          if !current_line_number.nil?
+            if line.start_with?('+')
+              # added line
+              added_lines.push current_line_number
+              current_line_number += 1
+            elsif !line.start_with?('-')
+              # unmodified line
+              current_line_number += 1
+            end
+          end
+        end
+      end
+      added_lines
     end
 
     def gradlew_exists?
