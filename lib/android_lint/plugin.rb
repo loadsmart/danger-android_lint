@@ -84,6 +84,9 @@ module Danger
     # Only show messages within changed files.
     attr_accessor :filtering
 
+    # Only shows messages for the modified lines.
+    attr_accessor :filtering_lines
+
     # Calls lint task of your gradle project.
     # It fails if `gradlew` cannot be found inside current directory.
     # It fails if `severity` level is not a valid option.
@@ -113,7 +116,7 @@ module Danger
       filtered_issues = filter_issues_by_severity(issues)
 
       message = ""
-      
+
       if inline_mode
         # Report with inline comment
         send_inline_comment(filtered_issues)
@@ -121,7 +124,7 @@ module Danger
         message = message_for_issues(filtered_issues)
         markdown("### AndroidLint found issues\n\n" + message) unless message.to_s.empty?
       end
-      
+
       message
     end
 
@@ -195,9 +198,9 @@ module Danger
         filtered.each do |r|
           location = r.xpath('location').first
           filename = location.get('file').gsub(dir, "")
-          next unless target_files.include? filename
+          next unless !filtering || (target_files.include? filename)
           line = (location.get('line') || "0").to_i
-          if filtering
+          if filtering_lines
             added_lines = parseDiff(git.diff_for_file(filename).patch)
             next unless added_lines.include? line
           end
@@ -213,7 +216,7 @@ module Danger
       diff_lines = diff.strip.split("\n")
       diff_lines.each_with_index do |line, index|
         if m = /\+(\d+)(?:,\d+)? @@/.match(line)
-          # (e.g. @@ -32,10 +32,7 @@) 
+          # (e.g. @@ -32,10 +32,7 @@)
           current_line_number = Integer(m[1])
         else
           if !current_line_number.nil?
