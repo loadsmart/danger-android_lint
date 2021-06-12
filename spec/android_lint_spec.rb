@@ -188,8 +188,47 @@ module Danger
           expect(warn).not_to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
         end
 
-      end
+        describe "for a modified file" do
+          before do
+            allow(Dir).to receive(:pwd).and_return("/Users/shivampokhriyal/Documents/projects/Commcare/commcare-android")
 
+            allow(@android_lint.git).to receive(:modified_files).and_return([
+            "app/build.gradle",
+            ])
+
+            fake_patch = File.read("spec/fixtures/pr-diff.diff")
+            diff = [OpenStruct.new(type: "modified", path: "app/build.gradle")]
+            allow(@android_lint.git).to receive(:diff).and_return(diff)
+            diff_for_file = OpenStruct.new(insertions: 3)
+            allow(diff).to receive(:[]).with("app/build.gradle").and_return(diff_for_file)
+            allow(diff_for_file).to receive(:patch).and_return(fake_patch)
+
+            fake_result = File.open("spec/fixtures/lint-result-for-pr.xml")
+            allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+          end
+
+          it 'with filtering_lines, only show issues in modified lines' do
+            @android_lint.filtering_lines = true
+            @android_lint.lint inline_mode: true
+
+            error = @android_lint.status_report[:errors]
+            expect(error).to include("fake message three")
+
+            expect(error).not_to include("fake message one")
+            expect(error).not_to include("fake message two")
+          end
+
+          it 'with filtering, show all issues' do
+            @android_lint.filtering = true
+            @android_lint.lint inline_mode: true
+
+            error = @android_lint.status_report[:errors]
+            expect(error).to include("fake message one")
+            expect(error).to include("fake message two")
+            expect(error).to include("fake message three")
+          end
+        end
+      end
     end
   end
 end
