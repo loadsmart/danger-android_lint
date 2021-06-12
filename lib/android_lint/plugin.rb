@@ -201,7 +201,7 @@ module Danger
           next unless !filtering || (target_files.include? filename)
           line = (location.get('line') || "0").to_i
           if filtering_lines
-            added_lines = parseDiff(git.diff_for_file(filename).patch)
+            added_lines = parseDiff(git.diff[filename].patch)
             next unless added_lines.include? line
           end
           send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
