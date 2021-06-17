@@ -198,7 +198,7 @@ module Danger
         filtered.each do |r|
           location = r.xpath('location').first
           filename = location.get('file').gsub(dir, "")
-          next unless !filtering || (target_files.include? filename)
+          next unless (!filtering && !filtering_lines) || (target_files.include? filename)
           line = (location.get('line') || "0").to_i
           if filtering_lines
             added_lines = parseDiff(git.diff[filename].patch)
