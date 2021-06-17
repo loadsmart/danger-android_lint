@@ -43,4 +43,20 @@
             line="36"
             column="10"/>
     </issue>
+
+    <issue
+        id="2"
+        severity="Error"
+        message="fake message in unmodified file"
+        category="Correctness"
+        priority="8"
+        summary="Fake summary"
+        explanation="Fake explanation."
+        errorLine1="// debugImplementation because LeakCanary should only run in debug builds."
+        errorLine2="                        ~~~~~~~~~~~~~">
+        <location
+            file="/Users/shivampokhriyal/Documents/projects/Commcare/commcare-android/app/AndroidManifest.xml"
+            line="36"
+            column="10"/>
+    </issue>
 </issues>

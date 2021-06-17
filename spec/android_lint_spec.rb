@@ -216,9 +216,10 @@ module Danger
 
             expect(error).not_to include("fake message one")
             expect(error).not_to include("fake message two")
+            expect(error).not_to include("fake message in unmodified file")
           end
 
-          it 'with filtering, show all issues' do
+          it 'with filtering, show all issues in modified files' do
             @android_lint.filtering = true
             @android_lint.lint inline_mode: true
 
@@ -226,6 +227,8 @@ module Danger
             expect(error).to include("fake message one")
             expect(error).to include("fake message two")
             expect(error).to include("fake message three")
+
+            expect(error).not_to include("fake message in unmodified file")
           end
         end
       end
