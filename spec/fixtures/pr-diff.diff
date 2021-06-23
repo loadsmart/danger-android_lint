@@ -1,0 +1,14 @@
+diff --git a/app/build.gradle b/app/build.gradle
+index 6dcc647b8..a1365bd75 100644
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -33,6 +33,9 @@ configurations {
+ }
+
+ dependencies {
++    // debugImplementation because LeakCanary should only run in debug builds.
++    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
++
+     testImplementation 'junit:junit:4.12'
+     testImplementation('org.robolectric:robolectric:4.3.1') {
+         exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')

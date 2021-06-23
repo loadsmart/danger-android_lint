@@ -1,3 +1,6 @@
+# 0.0.9
+- Add `filtering_lines` parameter, to show lint issues only on modified lines ([@ShivamPokhriyal](https://github.com/ShivamPokhriyal))
+
 # 0.0.8
 - Fix security issues ([@barbosa](https://github.com/barbosa))
 - Expose report message ([@adamstrange])(https://github.com/adamstrange))

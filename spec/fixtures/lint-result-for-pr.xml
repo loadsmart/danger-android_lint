@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="5" by="lint 4.0.0">
+    <issue
+        id="DuplicatePlatformClasses"
+        severity="Error"
+        message="fake message one"
+        category="Correctness"
+        priority="8"
+        summary="Duplicate Platform Classes"
+        explanation="There are a number of libraries that duplicate not just functionality of the Android platform but using the exact same class names as the ones provided in Android -- for example the apache http classes. This can lead to unexpected crashes.&#xA;&#xA;To solve this, you need to either find a newer version of the library which no longer has this problem, or to repackage the library (and all of its dependencies) using something like the `jarjar` tool, or finally, rewriting the code to use different APIs (for example, for http code, consider using `HttpUrlConnection` or a library like `okhttp`).">
+        <location
+            file="/Users/shivampokhriyal/Documents/projects/Commcare/commcare-android/app/build.gradle"/>
+    </issue>
+
+    <issue
+        id="DuplicatePlatformClasses"
+        severity="Error"
+        message="fake message two"
+        category="Correctness"
+        priority="8"
+        summary="Duplicate Platform Classes"
+        explanation="There are a number of libraries that duplicate not just functionality of the Android platform but using the exact same class names as the ones provided in Android -- for example the apache http classes. This can lead to unexpected crashes.&#xA;&#xA;To solve this, you need to either find a newer version of the library which no longer has this problem, or to repackage the library (and all of its dependencies) using something like the `jarjar` tool, or finally, rewriting the code to use different APIs (for example, for http code, consider using `HttpUrlConnection` or a library like `okhttp`)."
+        errorLine1="    testImplementation &apos;org.json:json:20140107&apos;"
+        errorLine2="                        ~~~~~~~~~~~~~">
+        <location
+            file="/Users/shivampokhriyal/Documents/projects/Commcare/commcare-android/app/build.gradle"
+            line="52"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="FakeId"
+        severity="Error"
+        message="fake message three"
+        category="Correctness"
+        priority="8"
+        summary="Fake summary"
+        explanation="Fake explanation."
+        errorLine1="// debugImplementation because LeakCanary should only run in debug builds."
+        errorLine2="                        ~~~~~~~~~~~~~">
+        <location
+            file="/Users/shivampokhriyal/Documents/projects/Commcare/commcare-android/app/build.gradle"
+            line="36"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="2"
+        severity="Error"
+        message="fake message in unmodified file"
+        category="Correctness"
+        priority="8"
+        summary="Fake summary"
+        explanation="Fake explanation."
+        errorLine1="// debugImplementation because LeakCanary should only run in debug builds."
+        errorLine2="                        ~~~~~~~~~~~~~">
+        <location
+            file="/Users/shivampokhriyal/Documents/projects/Commcare/commcare-android/app/AndroidManifest.xml"
+            line="36"
+            column="10"/>
+    </issue>
+</issues>
