@@ -6,13 +6,8 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.7
-    executor: ruby/default
     steps:
       - checkout
-      - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
-      - run:
-          name: Test
-          command: bundle exec rake spec
+      - run: gem install bundler:2.2.10
+      - run: bundle install
+      - run: bundle exec rake spec
