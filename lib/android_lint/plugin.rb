@@ -169,9 +169,13 @@ module Danger
       results.each do |r|
         location = r.xpath('location').first
         filename = location.get('file').gsub(dir, "")
-        next unless !filtering || (target_files.include? filename)
-        line = location.get('line') || 'N/A'
+        next unless (!filtering && !filtering_lines) || (target_files.include? filename)
+        line = location.get('line').to_i || 'N/A'
         reason = r.get('message')
+        if filtering_lines
+          added_lines = parse_added_line_numbers(git.diff[filename].patch)
+          next unless added_lines.include? line
+        end
         count = count + 1
         message << "`#{filename}` | #{line} | #{reason} \n"
       end
@@ -189,7 +193,7 @@ module Danger
     # Send inline comment with danger's warn or fail method
     #
     # @return [void]
-    def send_inline_comment (issues)
+    def send_inline_comment(issues)
       target_files = (git.modified_files - git.deleted_files) + git.added_files
       dir = "#{Dir.pwd}/"
       SEVERITY_LEVELS.reverse.each do |level|
@@ -201,7 +205,7 @@ module Danger
           next unless (!filtering && !filtering_lines) || (target_files.include? filename)
           line = (location.get('line') || "0").to_i
           if filtering_lines
-            added_lines = parseDiff(git.diff[filename].patch)
+            added_lines = parse_added_line_numbers(git.diff[filename].patch)
             next unless added_lines.include? line
           end
           send(level === "Warning" ? "warn" : "fail", r.get('message'), file: filename, line: line)
@@ -209,10 +213,10 @@ module Danger
       end
     end
 
-    # parses git diff of a file and retuns an array of added line numbers.
-    def parseDiff(diff)
+    # Parses git diff of a file and retuns an array of added line numbers.
+    def parse_added_line_numbers(diff)
       current_line_number = nil
-      added_lines = []
+      added_line_numbers = []
       diff_lines = diff.strip.split("\n")
       diff_lines.each_with_index do |line, index|
         if m = /\+(\d+)(?:,\d+)? @@/.match(line)
@@ -222,7 +226,7 @@ module Danger
           if !current_line_number.nil?
             if line.start_with?('+')
               # added line
-              added_lines.push current_line_number
+              added_line_numbers.push current_line_number
               current_line_number += 1
             elsif !line.start_with?('-')
               # unmodified line
@@ -231,7 +235,7 @@ module Danger
           end
         end
       end
-      added_lines
+      added_line_numbers
     end
 
     def gradlew_exists?

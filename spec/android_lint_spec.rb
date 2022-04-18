@@ -193,7 +193,7 @@ module Danger
             allow(Dir).to receive(:pwd).and_return("/Users/shivampokhriyal/Documents/projects/Commcare/commcare-android")
 
             allow(@android_lint.git).to receive(:modified_files).and_return([
-            "app/build.gradle",
+              "app/build.gradle",
             ])
 
             fake_patch = File.read("spec/fixtures/pr-diff.diff")
@@ -207,28 +207,57 @@ module Danger
             allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
           end
 
-          it 'with filtering_lines, only show issues in modified lines' do
-            @android_lint.filtering_lines = true
-            @android_lint.lint inline_mode: true
+          context 'when inline_mode: true' do
+            it 'with filtering_lines, only show issues in modified lines' do
+              @android_lint.filtering_lines = true
+              @android_lint.lint inline_mode: true
 
-            error = @android_lint.status_report[:errors]
-            expect(error).to include("fake message three")
+              error = @android_lint.status_report[:errors]
+              expect(error).to include("fake message three")
 
-            expect(error).not_to include("fake message one")
-            expect(error).not_to include("fake message two")
-            expect(error).not_to include("fake message in unmodified file")
+              expect(error).not_to include("fake message one")
+              expect(error).not_to include("fake message two")
+              expect(error).not_to include("fake message in unmodified file")
+            end
+
+            it 'with filtering, show all issues in modified files' do
+              @android_lint.filtering = true
+              @android_lint.lint inline_mode: true
+
+              error = @android_lint.status_report[:errors]
+              expect(error).to include("fake message one")
+              expect(error).to include("fake message two")
+              expect(error).to include("fake message three")
+
+              expect(error).not_to include("fake message in unmodified file")
+            end
           end
 
-          it 'with filtering, show all issues in modified files' do
-            @android_lint.filtering = true
-            @android_lint.lint inline_mode: true
+          context 'when inline_mode: false' do
+            it 'with filtering_lines, only show issues in modified lines' do
+              @android_lint.filtering_lines = true
+              @android_lint.lint inline_mode: false
 
-            error = @android_lint.status_report[:errors]
-            expect(error).to include("fake message one")
-            expect(error).to include("fake message two")
-            expect(error).to include("fake message three")
+              puts @android_lint.status_report[:markdowns]
+              message = @android_lint.status_report[:markdowns][0].to_s
+              expect(message).to include("fake message three")
 
-            expect(error).not_to include("fake message in unmodified file")
+              expect(message).not_to include("fake message one")
+              expect(message).not_to include("fake message two")
+              expect(message).not_to include("fake message in unmodified file")
+            end
+
+            it 'with filtering, show all issues in modified files' do
+              @android_lint.filtering = true
+              @android_lint.lint inline_mode: false
+
+              message = @android_lint.status_report[:markdowns][0].to_s
+              expect(message).to include("fake message one")
+              expect(message).to include("fake message two")
+              expect(message).to include("fake message three")
+
+              expect(message).not_to include("fake message in unmodified file")
+            end
           end
         end
       end
