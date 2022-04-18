@@ -1,3 +1,7 @@
+# 0.0.10
+
+- Fix `filtering_lines` parameter to also apply to when `inline_mode` is `false` ([@petitJAM](https://github.com/petitJAM))
+
 # 0.0.9
 - Add `filtering_lines` parameter, to show lint issues only on modified lines ([@ShivamPokhriyal](https://github.com/ShivamPokhriyal))
 
