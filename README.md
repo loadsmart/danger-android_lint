@@ -85,6 +85,13 @@ android_lint.filtering = true
 android_lint.lint
 ```
 
+Additionally, you can further filter to only the modified lines by setting the `filtering_lines` parameter to `true`.
+
+```rb
+android_lint.filtering_lines = true
+android_lint.lint
+```
+
 #### Make Danger comment directly on the line instead of printing a Markdown table (GitHub only)
 
 ```rb
