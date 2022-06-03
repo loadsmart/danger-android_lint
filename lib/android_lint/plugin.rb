@@ -84,8 +84,11 @@ module Danger
     # Only show messages within changed files.
     attr_accessor :filtering
 
-    # Only shows messages for the modified lines.
+    # Only show messages for the modified lines.
     attr_accessor :filtering_lines
+
+    # Only show messages for issues not in this list.
+    attr_accessor :filter_issue_ids
 
     # Calls lint task of your gradle project.
     # It fails if `gradlew` cannot be found inside current directory.
@@ -167,6 +170,8 @@ module Danger
       message = ""
 
       results.each do |r|
+        issue_id = r.get('id')
+        next if filter_issue_ids && filter_issue_ids.include?(issue_id)
         location = r.xpath('location').first
         filename = location.get('file').gsub(dir, "")
         next unless (!filtering && !filtering_lines) || (target_files.include? filename)
