@@ -92,6 +92,17 @@ android_lint.filtering_lines = true
 android_lint.lint
 ```
 
+#### Filter issues by ID
+
+In some cases you may want to conditionally ignore specific lint warnings without fully disabling
+them in your `lintOptions` configuration. To do that, you can pass a list of IDs to the
+`filter_issue_ids` parameter.
+
+```rb
+android_lint.filter_issue_ids = ["MissingTranslation"]
+android_lint.lint
+```
+
 #### Make Danger comment directly on the line instead of printing a Markdown table (GitHub only)
 
 ```rb
