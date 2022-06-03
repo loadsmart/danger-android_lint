@@ -146,7 +146,7 @@ module Danger
           expect(markdown).to be_nil
         end
 
-        it 'Doesn`t print anything if no errors were found' do
+        it 'Doesn`t print anything if no errors were found at the set minimum severity level' do
           fake_result = File.open("spec/fixtures/lint-result-without-fatal.xml")
           allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
