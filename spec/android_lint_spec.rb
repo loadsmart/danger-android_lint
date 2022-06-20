@@ -188,14 +188,14 @@ module Danger
           expect(warn).not_to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
         end
 
-        describe 'filter_issue_ids' do
+        describe 'excluding_issue_ids' do
           before do
             fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
             allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
           end
 
           it 'Does not print ignored issues' do
-            @android_lint.filter_issue_ids = ["MissingTranslation", "RtlEnabled"]
+            @android_lint.excluding_issue_ids = ["MissingTranslation", "RtlEnabled"]
             @android_lint.lint
 
             markdown = @android_lint.status_report[:markdowns].first.message
