@@ -96,10 +96,10 @@ android_lint.lint
 
 In some cases you may want to conditionally ignore specific lint warnings without fully disabling
 them in your `lintOptions` configuration. To do that, you can pass a list of IDs to the
-`filter_issue_ids` parameter.
+`excluding_issue_ids` parameter.
 
 ```rb
-android_lint.filter_issue_ids = ["MissingTranslation"]
+android_lint.excluding_issue_ids = ["MissingTranslation"]
 android_lint.lint
 ```
 

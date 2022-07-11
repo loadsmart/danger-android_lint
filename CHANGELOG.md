@@ -1,6 +1,6 @@
 # 0.0.11
 
-- Add `filter_issue_ids` parameter to skip showing issues with the given IDs, e.g. "MissingTranslation" ([@petitJAM](https://github.com/petitJAM))
+- Add `excluding_issue_ids` parameter to skip showing issues with the given IDs, e.g. "MissingTranslation" ([@petitJAM](https://github.com/petitJAM))
 
 # 0.0.10
 
