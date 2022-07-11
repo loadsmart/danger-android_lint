@@ -146,7 +146,7 @@ module Danger
           expect(markdown).to be_nil
         end
 
-        it 'Doesn`t print anything if no errors were found' do
+        it 'Doesn`t print anything if no errors were found at the set minimum severity level' do
           fake_result = File.open("spec/fixtures/lint-result-without-fatal.xml")
           allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
 
@@ -186,6 +186,23 @@ module Danger
 
           warn = @android_lint.status_report[:warnings]
           expect(warn).not_to include("Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead")
+        end
+
+        describe 'excluding_issue_ids' do
+          before do
+            fake_result = File.open("spec/fixtures/lint-result-with-everything.xml")
+            allow(File).to receive(:open).with(@android_lint.report_file).and_return(fake_result)
+          end
+
+          it 'Does not print ignored issues' do
+            @android_lint.excluding_issue_ids = ["MissingTranslation", "RtlEnabled"]
+            @android_lint.lint
+
+            markdown = @android_lint.status_report[:markdowns].first.message
+            expect(markdown).to include("Implicitly using the default locale")
+            expect(markdown).not_to include("is not translated in")
+            expect(markdown).not_to include("The project references RTL attributes, but does not explicitly enable or disable RTL support with `android:supportsRtl` in the manifest")
+          end
         end
 
         describe "for a modified file" do
