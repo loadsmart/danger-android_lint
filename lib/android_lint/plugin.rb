@@ -110,7 +110,7 @@ module Danger
         system "./gradlew #{gradle_task}"
       end
 
-      unless File.exists?(report_file)
+      unless File.exist?(report_file)
         fail("Lint report not found at `#{report_file}`. "\
           "Have you forgot to add `xmlReport true` to your `build.gradle` file?")
       end
