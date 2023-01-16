@@ -8,6 +8,6 @@ jobs:
       - image: cimg/ruby:3.2.0
     steps:
       - checkout
-      - run: gem install bundler:2.2.10
+      - run: gem install bundler:2.4.3
       - run: bundle install
       - run: bundle exec rake spec
