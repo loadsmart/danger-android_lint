@@ -5,6 +5,7 @@ metadata:
   description: A Danger plugin for Android Lint
   annotations:
     github.com/project-slug: loadsmart/danger-android_lint
+    opslevel.com/tier: tier_3
   tags:
     - ruby
 spec:
