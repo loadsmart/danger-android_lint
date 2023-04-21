@@ -1,3 +1,7 @@
+# 0.0.12
+
+- Support ruby 3.2.0, fix undefined method exists? for File:Class (#38) ([@irgaly](https://github.com/irgaly))
+
 # 0.0.11
 
 - Add `excluding_issue_ids` parameter to skip showing issues with the given IDs, e.g. "MissingTranslation" ([@petitJAM](https://github.com/petitJAM))
